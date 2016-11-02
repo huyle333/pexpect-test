@@ -10,6 +10,7 @@ parser.add_argument("--debug", help="Print stdout and stderr messages.",
 args = parser.parse_args()
 
 def main():
+    run_interactive_command("ssh", 1, "/bin/bash", ["$"], ["ls"])
     print("Do computation here.")
     
 def run_command(name, return_code, command):
@@ -45,6 +46,29 @@ def run_command(name, return_code, command):
         sys.exit(return_code)
 
     return output
+
+def run_interactive_command(name, return_code, command, expectances, responses):
+    """Runs arbitrary command and exits with return_code if failure.
+
+    Args:
+        name: Name of the command for identification purposes.
+        return_code: An integer to exit if command fails.
+        command: An array with the components of the command.
+
+    Raises:
+        OSError or CalledProcessError: An error occurred running the
+        command.
+    """
+    for i, expectance in enumerate(expectances):
+        try:
+            child = pexpect.spawn(command)
+        except (OSError, subprocess.CalledProcessError) as err:
+            print(name + " runtime error: " + str(err))
+            sys.exit(return_code)
+
+        child.sendline(responses[i])
+        child.expect(expectance)
+        print(child.before)
 
 if __name__ == "__main__":
     main()
