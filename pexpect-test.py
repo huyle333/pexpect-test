@@ -10,7 +10,7 @@ parser.add_argument("--debug", help="Print stdout and stderr messages.",
 args = parser.parse_args()
 
 def main():
-    run_interactive_command("ssh", 1, "/bin/bash", ["$"], ["ls"])
+    run_interactive_command("bash", 1, "/bin/bash", [".*"], ["ls"])
     print("Do computation here.")
     
 def run_command(name, return_code, command):
@@ -60,6 +60,8 @@ def run_interactive_command(name, return_code, command, expectances, responses):
         command.
     """
     for i, expectance in enumerate(expectances):
+        print(expectance)
+        print(responses[i])
         try:
             child = pexpect.spawn(command)
         except (OSError, subprocess.CalledProcessError) as err:
@@ -69,6 +71,7 @@ def run_interactive_command(name, return_code, command, expectances, responses):
         child.sendline(responses[i])
         child.expect(expectance)
         print(child.before)
+        child.interact()
 
 if __name__ == "__main__":
     main()
