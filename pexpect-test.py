@@ -10,9 +10,27 @@ parser.add_argument("--debug", help="Print stdout and stderr messages.",
 args = parser.parse_args()
 
 def main():
-    run_interactive_command("bash", 1, "/bin/bash", [".*"], ["ls"])
-    print("Do computation here.")
-    
+    # child process can be anything interactive.
+    # /bin/bash is an example of an interactive menu.
+    child = pexpect.spawn("/bin/bash")
+    # sendline runs commands.
+    child.sendline("ls")
+    child.sendline("echo EOF")
+    # What do I expect after I use ls? Well, I expect to see a $.
+    child.expect("echo EOF")
+    # child.before represents everything before the expect, which means:
+    # when we see the next $, child.before will contain the `ls` output.
+    print(child.before)
+    # child.after prints things after the expect. Which is the `echo EOF` output.
+    print(child.after)
+
+    # exit from /bin/bash.
+    child.sendline("exit")
+    """
+    You can send multiple lines before expecting them.
+    You can expect multiple things and print the child.before or child.after.
+    """
+
 def run_command(name, return_code, command):
     """Runs arbitrary command and exits with return_code if failure.
 

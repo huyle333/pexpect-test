@@ -1,5 +1,7 @@
 # pexpect-test
-This repository tests the pexpect module for Python.
+
+pexpect allows you to automate interactions with programs that have a Text Terminal Interface.
+This repository will just be a test of the pexpect module for Python.
 
 ### Requirements
 
