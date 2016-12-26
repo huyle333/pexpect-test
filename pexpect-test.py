@@ -12,19 +12,22 @@ args = parser.parse_args()
 def main():
     # child process can be anything interactive.
     # /bin/bash is an example of an interactive menu.
-    child = pexpect.spawn("/bin/bash")
-    # sendline runs commands.
-    child.sendline("ls")
-    child.sendline("echo EOF")
-    # What do I expect after I use ls? Well, I expect to see a $.
-    child.expect("echo EOF")
-    # child.before represents everything before the expect, which means:
-    # when we see the next $, child.before will contain the `ls` output.
-    print(child.before)
-    # child.after prints things after the expect. Which is the `echo EOF` output.
-    print(child.after)
+    child = pexpect.spawn("/bin/bash -c ls")
+    child.expect("\r\n")
+    # print(child.before)
 
-    # exit from /bin/bash.
+    child = pexpect.spawn("ssh ubuntu@nba.slothparadise.com")
+    # sendline runs commands.
+    child.sendline("touch slothparadise2")
+    child.sendline("ls")
+
+    child.expect("ubuntu@ip-172-31-39-63:~")
+    child.expect("ubuntu@ip-172-31-39-63:~")
+    child.expect("ubuntu@ip-172-31-39-63:~")
+    # child.expect("([^\s]+)")
+    print(child.before)
+
+    # exit from ssh to end.
     child.sendline("exit")
     """
     You can send multiple lines before expecting them.
